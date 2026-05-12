@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "iPhone 15 Pro",
+    "price": 159999,
+    "description": "Apple flagship smartphone with A17 Pro chip, titanium body, and advanced camera system."
+  },
+  {
+    "id": 2,
+    "name": "Samsung Galaxy S24 Ultra",
+    "price": 145000,
+    "description": "Premium Android smartphone with Snapdragon processor, S Pen support, and AI features."
+  },
+  {
+    "id": 3,
+    "name": "Sony WH-1000XM5",
+    "price": 42000,
+    "description": "Wireless noise-cancelling headphones with excellent sound quality and long battery life."
+  },
+  {
+    "id": 4,
+    "name": "Dell XPS 15",
+    "price": 210000,
+    "description": "High-performance laptop with Intel Core processor, OLED display, and sleek design."
+  }
+]
