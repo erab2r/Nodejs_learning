@@ -1,8 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "http";
-import { readProduct } from "../service/product.service";
+import { insertProduct, readProduct } from "../service/product.service";
 import type { IProduct } from "../types/product.type";
+import { parseBody } from "../utility/parseBody";
 
-export const productController =(req: IncomingMessage,
+export const productController =async(req: IncomingMessage,
     res:ServerResponse) =>{
         const url = req.url;
         const method = req.method;
@@ -14,7 +15,7 @@ export const productController =(req: IncomingMessage,
         // console.log("This is the actual id : ",id);
 
         //get all products
-        if(url === "/products" && method === "GET"){
+        if (url === "/products" && method === "GET") {
             // const products = [
             //     {
             //         id : 1,
@@ -28,12 +29,56 @@ export const productController =(req: IncomingMessage,
             }));
         }else if(method === "GET" && id !== null){// get single product
             const products = readProduct();
-            const product = products.find((p : IProduct)=> p.id === id)
+            const product = products.find((p : IProduct)=> p.id === id);
             //console.log(product);
             res.writeHead(200,{"content-type" : "application/json"})
             res.end(JSON.stringify({message: "Product retrived succeefully",
                 data : product,
             }));
+        }else if(method === "POST" && url === "/products"){
+            //created a product by post method
+            const body =await parseBody(req);
+            const products = readProduct(); // [{},{},{}]
+            const newProduct = {
+                id: Date.now(),
+                ...body,
+                };
+            // console.log(newProduct);
+            products.push(newProduct); 
+            insertProduct(products);
+             res.writeHead(200, { "content-type": "application/json" });
+            res.end(JSON.stringify({message: "Product created succeefully",
+                data : products,
+            }));
+        }else if (method === "PUT" && id !== null) {
+        // Updated product by PUT method
+        const body = await parseBody(req);
+        const products = readProduct();
+
+        const index = products.findIndex((p: IProduct) => p.id === id);
+        // console.log(index);
+        if (index < 0) {
+            res.writeHead(404, { "content-type": "application/json" });
+            res.end(
+                JSON.stringify({
+                    message: "Product not found!",
+                        data: null,
+            }),
+        );
         }
 
-}
+        // console.log(products[index]);
+        products[index] = { id: products[index].id, ...body };
+
+        insertProduct(products);
+
+        res.writeHead(200, { "content-type": "application/json" });
+        res.end(
+            JSON.stringify({
+                message: "Product updated successfully!",
+                    data: products[index],
+      }),
+    );
+    }
+
+};
